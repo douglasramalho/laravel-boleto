@@ -76,6 +76,19 @@ class Caixa extends AbstractRemessa implements RemessaContract
      * @var string
      */
     protected $codigoCliente;
+    /**
+     * Número da versão do layout do arquivo
+     *
+     * @var string
+     */
+    protected $versaoLayoutArquivo = '101';
+
+    /**
+     * Número da versão do layout do header de lote
+     *
+     * @var string
+     */
+    protected $versaoLayoutHeaderLote = '060';
 
     /**
      * Retorna o codigo do cliente.
@@ -99,6 +112,34 @@ class Caixa extends AbstractRemessa implements RemessaContract
         $this->codigoCliente = $codigoCliente;
 
         return $this;
+    }
+
+    /**
+     * Retorna o número da versão do layout do arquivo
+     *
+     * @return string
+     */
+    public function getVersaoLayoutArquivo()
+    {
+        if (strlen($this->codigoCliente) == 7) {
+            return '107';
+        }
+        
+        return $this->versaoLayoutArquivo;
+    }
+
+    /**
+     * Retorna o número da versão do layout do header de lote arquivo
+     *
+     * @return string
+     */
+    public function getVersaoLayoutHeaderLote()
+    {
+        if (strlen($this->codigoCliente) == 7) {
+            return '067';
+        }
+        
+        return $this->versaoLayoutHeaderLote;
     }
 
     /**
@@ -299,7 +340,7 @@ class Caixa extends AbstractRemessa implements RemessaContract
         $this->add(144, 151, $this->getDataRemessa('dmY'));
         $this->add(152, 157, date('His'));
         $this->add(158, 163, Util::formatCnab('9', $this->getIdremessa(), 6));
-        $this->add(164, 166, '101');
+        $this->add(164, 166, $this->getVersaoLayoutArquivo());
         $this->add(167, 171, '00000');
         $this->add(172, 191, '');
         $this->add(192, 211, Util::formatCnab('X','REMESSA-PRODUCAO', 20));
@@ -325,7 +366,7 @@ class Caixa extends AbstractRemessa implements RemessaContract
         $this->add(9, 9, 'R');
         $this->add(10, 11, '01');
         $this->add(12, 13, '00');
-        $this->add(14, 16, '060');
+        $this->add(14, 16, $this->getVersaoLayoutHeaderLote());
         $this->add(17, 17, '');
         $this->add(18, 18, strlen(Util::onlyNumbers($this->getBeneficiario()->getDocumento())) == 14 ? 2 : 1);
         $this->add(19, 33, Util::formatCnab('9', Util::onlyNumbers($this->getBeneficiario()->getDocumento()), 15));
